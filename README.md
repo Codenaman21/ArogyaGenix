@@ -97,6 +97,14 @@ python main1.py
 Open your browser and navigate to:
 👉 **http://127.0.0.1:5000/**
 
+
+## ⚠️ Note on Missing Files
+
+Due to **GitHub's file size restrictions**, some files are not included in this repository. However, the **code is complete and fully functional**. If you need the missing files, feel free to contact me.
+
+📧 **Email:** nsachdeva300@gmail.com  
+
+
 ---
 ## 📷 Screenshots
 
