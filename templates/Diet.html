@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Planner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f0f, #232526);
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .input-box {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-box label {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .input-box input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white; /* Text will appear white */
+            font-size: 16px;
+        }
+
+        .input-box select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2); /* Dropdown background set to black */
+            color: white; /* Text color white */
+            font-size: 16px;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .input-box textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white; /* Text will appear white */
+            font-size: 16px;
+            resize: none;
+            height: 80px;
+        }
+
+
+        .input-box input::placeholder, .input-box textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        select {
+            appearance: none;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background: #007BFF;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .output {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            font-size: 16px;
+            min-height: 100px;
+        }
+
+        .download-btn {
+            background: #28a745;
+            margin-top: 10px;
+        }
+
+        .download-btn:hover {
+            background: #1e7e34;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Personalized Diet Planner</h2>
+        
+        <div class="input-container">
+            <div class="input-box">
+                <label>Weight (kg):</label>
+                <input type="number" id="weight" placeholder="Enter your weight">
+            </div>
+            <div class="input-box">
+                <label>Height (cm):</label>
+                <input type="number" id="height" placeholder="Enter your height">
+            </div>
+            <div class="input-box">
+                <label>Age:</label>
+                <input type="number" id="age" placeholder="Enter your age">
+            </div>
+            <div class="input-box">
+                <label>Gender:</label>
+                <select id="gender">
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="input-box">
+                <label>Diet Type:</label>
+                <select id="dietType">
+                    <option value="">Select</option>
+                    <option value="Weight Loss">Weight Loss</option>
+                    <option value="Weight Gain">Weight Gain</option>
+                    <option value="Balanced">Balanced Diet</option>
+                </select>
+            </div>
+            <div class="input-box">
+                <label>Additional Details:</label>
+                <textarea id="details" placeholder="Describe your preferences or restrictions"></textarea>
+            </div>
+        </div>
+
+        <button class="btn" onclick="generateDietPlan()">Generate Diet Plan</button>
+
+        <div class="output" id="output">Your diet plan will appear here...</div>
+
+        <button class="btn download-btn" onclick="downloadPDF()">Download as PDF</button>
+    </div>
+
+    <script>
+        function generateDietPlan() {
+            let weight = document.getElementById('weight').value;
+            let height = document.getElementById('height').value;
+            let age = document.getElementById('age').value;
+            let gender = document.getElementById('gender').value;
+            let dietType = document.getElementById('dietType').value;
+            let details = document.getElementById('details').value;
+
+            let output = document.getElementById('output');
+
+            if (!weight || !height || !age || !gender || !dietType) {
+                output.innerHTML = "Please fill in all fields.";
+                return;
+            }
+
+            let plan = `Personalized ${dietType} Plan:\n\n`;
+            plan += `Weight: ${weight} kg\n`;
+            plan += `Height: ${height} cm\n`;
+            plan += `Age: ${age} years\n`;
+            plan += `Gender: ${gender}\n`;
+            plan += `Diet Type: ${dietType}\n\n`;
+
+            plan += `Recommended Plan:\n`;
+            if (dietType === "Weight Loss") {
+                plan += "Eat more vegetables, lean protein, and healthy fats.\nExercise regularly.\n";
+            } else if (dietType === "Weight Gain") {
+                plan += "Eat more protein-rich foods and increase calorie intake.\nStrength training is recommended.\n";
+            } else {
+                plan += "Maintain a balanced intake of carbs, proteins, and fats.\nStay active daily.\n";
+            }
+
+            if (details) {
+                plan += `\nAdditional Notes: ${details}`;
+            }
+
+            output.innerHTML = plan.replace(/\n/g, "<br>");
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            let doc = new jsPDF();
+            let dietPlanText = document.getElementById('output').innerText;
+
+            if (dietPlanText.includes("Your diet plan will appear here") || dietPlanText.includes("Please fill in all fields")) {
+                alert("No diet plan generated yet!");
+                return;
+            }
+
+            doc.text("Personalized Diet Plan", 20, 20);
+            doc.text(dietPlanText, 20, 30, { maxWidth: 170 });
+            doc.save("Diet_Plan.pdf");
+        }
+    </script>
+
+</body>
+</html>
