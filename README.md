@@ -111,7 +111,7 @@ Due to **GitHub's file size restrictions**, some files are not included in this 
 Below are some screenshots of the **ArogyaGenix** platform showcasing its features and interface:  
 
 ### **1️⃣ Home Page** 🏠  
-![Home Page](https://raw.githubusercontent.com/yourusername/repository/main/images/homepage.png)  
+![Home Page](https://raw.githubusercontent.com/Codenaman21/ArogyaGenix/main/images/)  
 
 ### **2️⃣ Medical Report Analysis Dashboard** 📑  
 ![Analysis Dashboard](https://raw.githubusercontent.com/yourusername/repository/main/images/analysis_dashboard.png)  
