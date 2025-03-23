@@ -111,7 +111,7 @@ Due to **GitHub's file size restrictions**, some files are not included in this 
 Below are some screenshots of the **ArogyaGenix** platform showcasing its features and interface:  
 
 ### **1️⃣ Home Page** 🏠  
-![Home Page]([https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103234.png])  
+![Home Page](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103234.png)  
 
 ### **2️⃣ Medical Report Analysis Dashboard** 📑  
 ![Analysis Dashboard](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103305.png)  
@@ -123,7 +123,7 @@ Below are some screenshots of the **ArogyaGenix** platform showcasing its featur
 ![Chatbot](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103432.png)  
 
 ### **5️⃣ Hospital Locator** 📍  
-![Hospital Locator](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103432.png)  
+![Hospital Locator](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103358.png)  
 
 🚀 **Note:** If images are not visible, please check the `/images/` folder in the repository.  
 
