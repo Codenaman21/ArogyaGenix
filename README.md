@@ -106,8 +106,26 @@ Due to **GitHub's file size restrictions**, some files are not included in this 
 
 
 ---
-## 📷 Screenshots
+## 📸 Screenshots  
 
+Below are some screenshots of the **ArogyaGenix** platform showcasing its features and interface:  
+
+### **1️⃣ Home Page** 🏠  
+![Home Page](https://raw.githubusercontent.com/yourusername/repository/main/images/homepage.png)  
+
+### **2️⃣ Medical Report Analysis Dashboard** 📑  
+![Analysis Dashboard](https://raw.githubusercontent.com/yourusername/repository/main/images/analysis_dashboard.png)  
+
+### **3️⃣ Multi-Cancer Detection Results** 🧬  
+![Cancer Detection](https://raw.githubusercontent.com/yourusername/repository/main/images/cancer_detection.png)  
+
+### **4️⃣ AI Chatbot Assistance** 🤖  
+![Chatbot](https://raw.githubusercontent.com/yourusername/repository/main/images/chatbot.png)  
+
+### **5️⃣ Hospital Locator** 📍  
+![Hospital Locator](https://raw.githubusercontent.com/yourusername/repository/main/images/hospital_locator.png)  
+
+🚀 **Note:** If images are not visible, please check the `/images/` folder in the repository.  
 
 ---
 ## 📌 Future Enhancements
