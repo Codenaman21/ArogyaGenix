@@ -1,0 +1,72 @@
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="glass-morphism rounded-xl p-6 mb-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-3xl font-semibold text-white">Analysis Dashboard</h1>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Upload Section -->
+        <div class="glass-morphism rounded-xl p-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Upload Reports</h2>
+            <div class="drag-area rounded-lg p-6 text-center cursor-pointer">
+                <i class="bi bi-cloud-upload text-4xl text-[#34b4f4] mb-4"></i>
+                <h3 class="text-lg text-white mb-2">Drag & Drop files here</h3>
+                <p class="text-sm text-white/70 mb-4">or</p>
+                <button class="bg-[#34b4f4]/20 hover:bg-[#34b4f4]/30 text-white px-6 py-2 rounded-lg transition-all">
+                    Browse Files
+                </button>
+                <input type="file" id="fileInput" class="hidden" accept=".pdf,.jpg,.jpeg,.png,.dcm" multiple>
+                <p class="text-sm text-white/70 mt-4">Supported: PDF, JPG, PNG, DICOM</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="glass-morphism rounded-xl p-6">
+            <h2 class="text-xl font-semibold text-white mb-4">Quick Stats</h2>
+            <!-- Dropdown Menu -->
+            <div class="mb-4">
+                <label for="statsDropdown" class="text-white/70 block mb-2">Select Report Type:</label>
+                <select id="statsDropdown" class="w-full bg-white/10 text-white p-2 rounded-lg">
+                    <option value="blood">Blood Report</option>
+                    <option value="urine">Urine Report</option>
+                    <option value="thyroid">Thyroid Report</option>
+                </select>
+            </div>
+
+            <!-- Stats Display -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white/10 rounded-lg p-4">
+                    <p id="reportsAnalyzed" class="text-[#34b4f4] text-2xl font-bold">24</p>
+                    <p class="text-white/70">Reports Analyzed</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-4">
+                    <p id="accuracyRate" class="text-[#34b4f4] text-2xl font-bold">98%</p>
+                    <p class="text-white/70">Accuracy Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section (Initially Hidden) -->
+    <div id="resultsSection" class="glass-morphism rounded-xl p-6 mt-8 hidden">
+        <h2 class="text-2xl font-semibold text-white mb-6">Analysis Results</h2>
+        <div class="space-y-6">
+            <div class="bg-white/10 rounded-lg p-4">
+                <h3 class="text-[#34b4f4] text-lg mb-2">Detected Condition</h3>
+                <p id="condition" class="text-white/90">Processing...</p>
+            </div>
+            <div class="bg-white/10 rounded-lg p-4">
+                <h3 class="text-[#34b4f4] text-lg mb-2">Severity Level</h3>
+                <div id="severityIndicator" class="h-2 rounded-full bg-white/20">
+                    <div class="h-full w-0 transition-all duration-1000"></div>
+                </div>
+                <p id="severityText" class="text-white/90 mt-2">Analyzing...</p>
+            </div>
+            <button id="downloadBtn" class="bg-[#34b4f4] hover:bg-[#34b4f4]/80 text-white px-8 py-3 rounded-lg transition-all w-full accent-glow">
+                Download Full Report
+            </button>
+        </div>
+    </div>
+</div>

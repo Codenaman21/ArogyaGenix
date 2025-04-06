@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Dashboard</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://unpkg.com/cornerstone-core"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .drag-area {
+            border: 2px dashed rgba(52, 180, 244, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .drag-area.active {
+            border: 2px solid #34b4f4;
+            background: rgba(52, 180, 244, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .accent-glow {
+            box-shadow: 0 0 15px rgba(52, 180, 244, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-box {
+            background-color: #4b4b4b;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-blue {
+            color: #4fc3f7;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Ensure dropdown options have black text */
+        #statsDropdown option {
+            color: black;
+            /* Black text for options */
+            background-color: white;
+            /* White background for options */
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="glass-morphism rounded-xl p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-semibold text-white">Analysis Dashboard</h1>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Upload Section -->
+            <div class="glass-morphism rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Upload Reports</h2>
+                <div class="drag-area rounded-lg p-6 text-center cursor-pointer">
+                    <i class="bi bi-cloud-upload text-4xl text-[#34b4f4] mb-4"></i>
+                    <h3 class="text-lg text-white mb-2">Drag & Drop files here</h3>
+                    <p class="text-sm text-white/70 mb-4">or</p>
+                    <button
+                        class="bg-[#34b4f4]/20 hover:bg-[#34b4f4]/30 text-white px-6 py-2 rounded-lg transition-all">
+                        Browse Files
+                    </button>
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.jpg,.jpeg,.png,.dcm" multiple>
+                    <p class="text-sm text-white/70 mt-4">Supported: PDF, JPG, PNG, DICOM</p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="glass-morphism rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Quick Stats</h2>
+                <!-- Dropdown Menu -->
+                <div class="mb-4">
+                    <label for="statsDropdown" class="text-white/70 block mb-2">Select Report Type:</label>
+                    <select id="statsDropdown" class="w-full bg-white/10 text-white p-2 rounded-lg">
+                        <option value="blood">Blood Report</option>
+                        <option value="urine">Urine Report</option>
+                        <option value="thyroid">Thyroid Report</option>
+                    </select>
+                </div>
+
+                <!-- Stats Display -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p id="reportsAnalyzed" class="text-[#34b4f4] text-2xl font-bold">24</p>
+                        <p class="text-white/70">Reports Analyzed</p>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p id="accuracyRate" class="text-[#34b4f4] text-2xl font-bold">98%</p>
+                        <p class="text-white/70">Accuracy Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section (Initially Hidden) -->
+        <div id="resultsSection" class="glass-morphism rounded-xl p-6 mt-8 hidden">
+            <h2 class="text-2xl font-semibold text-white mb-6">Analysis Results</h2>
+            <div class="space-y-6">
+                <div class="bg-white/10 rounded-lg p-4">
+                    <h3 class="text-[#34b4f4] text-lg mb-2">Detected Condition</h3>
+                    <p id="condition" class="text-white/90">Processing...</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-4">
+                    <h3 class="text-[#34b4f4] text-lg mb-2">Severity Level</h3>
+                    <div id="severityIndicator" class="h-2 rounded-full bg-white/20">
+                        <div class="h-full w-0 transition-all duration-1000"></div>
+                    </div>
+                    <p id="severityText" class="text-white/90 mt-2">Analyzing...</p>
+                </div>
+                <!-- Add this somewhere in your HTML (analyse.html maybe) -->
+                <div class="result-box">
+                    <h3 class="text-blue">Disease Summary</h3>
+                    <p id="disease-summary"><em>Loading summary...</em></p>
+                </div>
+                <button id="downloadBtn"
+                    class="bg-[#34b4f4] hover:bg-[#34b4f4]/80 text-white px-8 py-3 rounded-lg transition-all w-full accent-glow">
+                    Download Full Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Button to Go Back to Home -->
+    <button onclick="goBackToHome()"
+        class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 transition">
+        ✖
+    </button>
+
+
+    <script>
+        // Drag & Drop + Click Upload
+        const dragArea = document.querySelector('.drag-area');
+        const fileInput = document.querySelector('#fileInput');
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, preventDefaults);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Highlight drag area on dragover
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => dragArea.classList.add('active'));
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => dragArea.classList.remove('active'));
+        });
+
+        // Click to upload
+        dragArea.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+
+        async function handleFiles(e) {
+            const file = e.target.files[0]; // Get first selected file
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // ✅ Get selected report type from dropdown
+            const reportType = document.getElementById('statsDropdown').value;
+
+            // ✅ Select API endpoint based on report type
+            let apiEndpoint;
+            if (reportType === "blood") {
+                apiEndpoint = "http://127.0.0.1:5000/analyze_blood";
+            } else if (reportType === "urine") {
+                apiEndpoint = "http://127.0.0.1:5000/analyze_urine";
+            } else if (reportType === "thyroid") {
+                apiEndpoint = "http://127.0.0.1:5000/analyze_thyroid";
+            } else {
+                console.error("❌ Invalid report type selected!");
+                alert("Please select a valid report type!");
+                return;
+            }
+
+            console.log(`📤 Sending File to API: ${apiEndpoint}`);
+
+            // ✅ Show results section & processing message
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('condition').innerText = "Processing...";
+            document.getElementById('severityText').innerText = "Analyzing...";
+            document.getElementById('severityIndicator').firstElementChild.style.width = "0%"; // Reset progress bar
+
+            try {
+                let response = await fetch(apiEndpoint, { method: 'POST', body: formData });
+
+                console.log("🔄 Server Response:", response);
+                if (!response.ok) {
+                    throw new Error(`Server Error: ${response.status}`);
+                }
+
+                let result = await response.json();
+                console.log("✅ Diagnosis Result:", result);
+
+                // ❌ Handle Errors
+                if (result.error) {
+                    document.getElementById('condition').innerText = "Error: " + result.error;
+                    document.getElementById('severityText').innerText = "Failed to analyze.";
+                    return;
+                }
+
+                // ✅ Display Diagnosis Properly
+                let diagnosis = result.diagnosis; // Access the diagnosis field directly
+                let confidence = result.confidence_score || 0; // Access the confidence_score field directly
+
+                // Update the diagnosis text
+                document.getElementById('condition').innerText = "Diagnosis: " + diagnosis;
+
+                // Update the confidence score and progress bar
+                document.getElementById('severityText').innerText = `Confidence: ${confidence.toFixed(2)}%`;
+                let severityBar = document.getElementById('severityIndicator').firstElementChild;
+
+                // Convert confidence score to percentage (if it's between 0 and 1)
+                if (confidence <= 1) {
+                    confidence = confidence * 100;
+                }
+
+                severityBar.style.width = `${confidence}%`;  // Set bar width
+                severityBar.style.backgroundColor = getSeverityColor(confidence); // Change bar color dynamically
+
+                document.getElementById('severityText').innerText = `Confidence: ${confidence.toFixed(2)}%`;
+                function getSeverityColor(confidence) {
+                    if (confidence > 80) {
+                        return "green"; // High confidence = Green
+                    } else if (confidence > 50) {
+                        return "orange"; // Medium confidence = Orange
+                    } else {
+                        return "red"; // Low confidence = Red
+                    }
+                }
+
+
+
+            } catch (error) {
+                console.error("❌ Error processing file:", error);
+                document.getElementById('condition').innerText = "Error processing file!";
+                document.getElementById('severityText').innerText = "Failed to analyze.";
+            }
+        }
+
+        // Download Report Button
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            alert('Downloading report...');
+        });
+
+        // Redirect to Home
+        function goBackToHome() {
+            window.location.href = "/"; // Redirects to the home page
+        }
+
+        function fetchDiseaseSummary(diseaseName) {
+            // Send POST request to Flask API
+            fetch('/get_disease_summary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disease: diagnosis }) // 👈 Make sure 'diagnosis' has value
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('disease-summary').innerText = data.summary;
+            })
+            .catch(error => {
+                document.getElementById('disease-summary').innerText = 'Failed to load summary';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

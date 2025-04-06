@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare AI - AI-Powered Medical Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #000000, #121318, #1a1f2c, #0047ab); 
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 25% 50%; }
+            50% { background-position: 50% 50%; }
+            75% { background-position: 75% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+        }
+
+        .glass-card {
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: linear-gradient(90deg, #4CAF50, #2196F3);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .chatbot {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 10px;
+            display: none;
+            z-index: 100;
+        }
+
+        .chatbot.active {
+            display: block;
+        }
+
+        .service-modal {
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .service-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .heartbeat-container {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px; 
+        }
+
+        .heartbeat-line {
+            width: 100%;
+            height: 50px;
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: heartbeat 2s infinite linear;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                stroke-dashoffset: 500;
+            }
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <nav class="glass fixed w-full z-50 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center">
+            <button onclick="toggleMenu()" class="md:hidden"><i class="bi bi-list text-2xl"></i></button>
+            <a href="#" class="text-xl font-bold ml-2">ArogyaGenix</a>
+        </div>
+        <div class="hidden md:flex space-x-6" id="navLinks">
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#services" class="nav-link">Services</a>
+            <a href="#about" class="nav-link">About Us</a>
+            <a href="/contact" class="nav-link">Contact Us</a>
+            <button class="glass px-4 py-2 rounded-full hover:bg-green-500 transition-all" 
+                    onclick="location.href='/login'">
+                Login
+            </button>
+
+        </div>
+    </nav>
+    <section id="home" class="min-h-screen pt-24 px-6">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="md:w-1/2 space-y-6">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight">
+                    AI-Powered Medical Analysis for a Healthier Future
+                </h1>
+                <p class="text-gray-300 text-lg">
+                    Revolutionizing healthcare with AI-driven diagnosis and predictive analysis
+                    Welcome to ArogyaGenix – an intelligent platform designed to simplify healthcare access. 
+                    Our AI-powered system helps you analyze medical reports, detect diseases, and locate nearby hospitals with ease. 
+                    Get instant insights, emergency assistance, and smart recommendations—all in one place. Stay informed, stay healthy! 🚑📊🩺
+                </p>
+                <button class="glass px-8 py-3 rounded-full text-lg hover:bg-green-500 transition-all" 
+                        onclick="location.href='/login'">
+                    Get Started
+                </button>
+
+            </div>
+            <div class="md:w-1/2 mt-12 md:mt-0">
+                <img src="{{ url_for('static', filename='images/12.jpg') }}" alt="AI Healthcare" class="rounded-xl w-full">
+            </div>
+        </div>
+    </section>
+    <div class="heartbeat-container">
+        <svg class="heartbeat-line" viewBox="0 0 500 100" preserveAspectRatio="none">
+            <polyline points="0,50 50,50 70,20 90,80 110,10 130,50 180,50 200,30 220,70 240,10 260,50 500,50" 
+                stroke="#00FF7F" fill="none" stroke-width="4" stroke-linejoin="round"/>
+        </svg>
+    </div>    
+    <section id="services" class="py-20 px-6">
+        <div class="container mx-auto">        
+            <h2 class="text-3xl font-bold text-center mb-12">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/analyse'">
+                    <i class="bi bi-virus text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Blood, Urine & Thyroid Report Analysis</h3>
+                </div>
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/analyse1'">
+                    <i class="bi bi-browser-chrome text-4xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold mt-4">MRI & CT Scan Analysis (Cancer/Tumor Detection)</h3>
+                </div>                
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/hospital'">
+                    <i class="bi bi-hospital text-4xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Nearest Hospital Locator</h3>
+                </div>                
+                <div class="glass glass-card p-6 cursor-pointer" onclick="window.location.href='/chatbot2'">
+                    <i class="bi bi-virus text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Emergency Medical Advice</h3>
+                </div>                
+                <div class="glass glass-card p-6 cursor-pointer" onclick="openServiceModal('consultation')">
+                    <i class="bi bi-person-check text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Upcoming Doctor Consultation</h3>
+                </div>
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/Diet'">
+                    <i class="fa-solid fa-dumbbell text-4xl text-green-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Diet Planner</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="services" class="py-20 px-6">
+        <div class="container mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Upcoming Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/redirect'">
+                    <i class="fa-solid fa-dumbbell text-4xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Exercise Planner</h3>
+                </div>
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/redirect'">
+                    <i class="bi bi-cpu text-4xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold mt-4">Hardware Enhancements</h3>
+                </div>
+                <div class="glass glass-card p-6 cursor-pointer" onclick="location.href='/redirect'">
+                    <i class="bi bi-capsule text-4xl text-blue-500"></i>
+                    <h3 class="text-xl font-bold mt-4">MediBazar</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="about" class="py-20 px-6 bg-opacity-50 bg-black">
+        <div class="container mx-auto">
+            <div class="glass p-8">
+                <h2 class="text-3xl font-bold text-center mb-8">About Us</h2>
+                <p class="text-gray-300">
+                    Welcome to ArogyaGenix, your AI-powered healthcare assistant dedicated to making medical support fast, reliable, and accessible. 
+                    Our platform integrates advanced artificial intelligence with healthcare expertise to provide accurate medical report analysis, emergency assistance, and hospital navigation, ensuring you get the help you need when you need it.
+                    We offer a range of AI-driven services, including blood, urine, and thyroid report analysis, MRI & CT scan-based cancer detection, and a real-time hospital locator. 
+                    Our system also provides emergency medical advice and enables seamless doctor consultations, empowering users to make informed health decisions with ease.
+                    At ArogyaGenix, we believe in using technology to bridge the gap between healthcare and accessibility. 
+                    Whether you need quick diagnostics, expert recommendations, or immediate hospital directions, our platform is designed to assist you at every step. 
+                    Your health is our priority, and we are committed to making healthcare smarter and more efficient for everyone.
+                </p>
+            </div>
+        </div>
+    </section>
+    <section id="about" class="py-20 px-6 bg-opacity-50 bg-black">
+        <div class="container mx-auto">
+            <div class="glass p-8">
+                <h2 class="text-3xl font-bold text-center mb-8">Our Vison</h2>
+                <p class="text-gray-300">
+                    At ArogyaGenix, our vision is to revolutionize healthcare accessibility through the power of AI and technology. 
+                    We aim to create a world where early diagnosis, timely medical intervention, and expert guidance are available to everyone, regardless of location or financial constraints. 
+                    By integrating artificial intelligence with healthcare services, we strive to empower individuals with accurate, fast, and reliable medical insights at their fingertips.
+                    We envision a future where patients can detect diseases at an early stage, receive instant emergency assistance, and seamlessly connect with medical professionals—all through an intuitive and intelligent platform. 
+                    Our AI-driven solutions, from cancer detection to real-time hospital navigation, are designed to bridge the gap between patients and the healthcare they deserve.
+                    With continuous innovation and a commitment to excellence, we aspire to make healthcare smarter, more efficient, and more accessible for everyone. 
+                    
+                    At ArogyaGenix, we are not just building a platform; we are shaping the future of AI-powered healthcare for a healthier and safer world.
+                </p>
+            </div>
+        </div>
+    </section>
+    <footer class="glass py-10 px-6">
+        <div class="container mx-auto text-center">
+            <p class="text-gray-300">© 2025 ArogyaGenix. All rights reserved.</p>
+        </div>
+    </footer>
+    <div id="serviceModal" class="service-modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="glass m-4 max-w-2xl w-full p-8 rounded-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" id="modalTitle">Upload Medical Report</h3>
+                <button onclick="closeServiceModal()" class="text-2xl">&times;</button>
+            </div>
+            <div class="upload-zone p-8 border-2 border-dashed border-gray-600 rounded-xl text-center cursor-pointer" id="dropZone">
+                <i class="bi bi-cloud-upload text-4xl text-green-500"></i>
+                <p class="mt-4">Drag and drop files here or click to upload</p>
+                <p class="text-sm text-gray-400 mt-2">Supported formats: PDF, JPG, PNG, DICOM</p>
+            </div>
+            <button class="w-full glass mt-6 py-3 rounded-xl hover:bg-green-500 transition-all">
+                Analyze Report
+            </button>
+        </div>
+    </div>
+
+    
+    <script>
+        function openServiceModal(type) {
+            const modal = document.getElementById('serviceModal');
+            const title = document.getElementById('modalTitle');
+            
+            switch(type) {
+                case 'disease':
+                    title.textContent = 'AI Disease Detection';
+                    break;
+                case 'scan':
+                    title.textContent = 'Upload Scan';
+                    break;
+                case 'cancer':
+                    title.textContent = 'Cancer & Thyroid Report Analysis';
+                    break;
+                case 'emergency':
+                    title.textContent = 'Emergency Medical Advice';
+                    break;
+                case 'consultation':
+                    title.textContent = 'Upcoming Doctor Consultation';
+                    break;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.remove('active');
+        }
+
+        function toggleChatbot() {
+            const chatbot = document.getElementById('chatbot');
+            chatbot.classList.toggle('active');
+        }
+
+        function closeChatbot() {
+            document.getElementById('chatbot').classList.remove('active');
+        }
+
+    n
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('hidden');
+        }
+        
+
+    </script>
+</body>
+</html>

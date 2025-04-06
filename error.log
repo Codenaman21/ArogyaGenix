@@ -1,0 +1,53 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+DEBUG:urllib3.connectionpool:Resetting dropped connection: huggingface.co
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:32:15] "[35m[1mGET / HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:32:15] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:32:15] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:32:15] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:32:15] "[36mGET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:34:43] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:34:48] "[33mGET /login.html HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:35:57] "[33mGET /login.html HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:36:02] "[33mGET /hospital.html HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:36:06] "[33mGET /hospital.html HTTP/1.1[0m" 404 -
+DEBUG:urllib3.connectionpool:Resetting dropped connection: huggingface.co
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:41:50] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:41:56] "[33mGET /hospital.html HTTP/1.1[0m" 404 -
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:42:30] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:42:33] "[33mGET /hospital.html HTTP/1.1[0m" 404 -
+DEBUG:urllib3.connectionpool:Resetting dropped connection: huggingface.co
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /ShimaGh/Brain-Tumor-Detection/resolve/main/config.json HTTP/11" 200 0
+DEBUG:urllib3.connectionpool:https://huggingface.co:443 "HEAD /google/vit-base-patch16-224-in21k/resolve/main/preprocessor_config.json HTTP/11" 200 0
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:47:15] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [28/Feb/2025 13:47:18] "[33mGET /hospital.html HTTP/1.1[0m" 404 -

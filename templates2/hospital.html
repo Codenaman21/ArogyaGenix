@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearest Hospital Locator</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Leaflet.js for OpenStreetMap -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #0a0f1e, #1e293b);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Emergency Button */
+        .emergency-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: red;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0px 4px 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .emergency-btn:hover {
+            background: darkred;
+        }
+
+        /* Hover Effect for Hospital Cards */
+        .hospital-card:hover {
+            transform: scale(1.05);
+            transition: 0.3s;
+        }
+
+        /* Responsive Map */
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body class="p-6">
+
+    <!-- Header -->
+    <header class="text-center text-3xl font-semibold mb-6">Nearest Hospital Locator</header>
+
+    <!-- Search Bar & GPS Button -->
+    <div class="glass flex flex-col md:flex-row items-center gap-4 p-4">
+        <input type="text" id="locationInput" placeholder="Enter location..." class="w-full md:w-2/3 p-3 bg-transparent border border-gray-300 rounded-lg text-white focus:outline-none">
+        <button id="searchButton" class="bg-green-600 px-6 py-3 rounded-lg text-white hover:bg-green-800 transition">Search</button>
+        <button id="gpsButton" class="bg-blue-600 px-6 py-3 rounded-lg text-white hover:bg-blue-800 transition">Use My Location</button>
+    </div>
+
+    <!-- Hospital List -->
+    <div id="hospitalList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"></div>
+
+    <!-- Map Section -->
+    <div class="glass mt-6">
+        <h2 class="text-2xl text-center mb-4">Nearby Hospitals</h2>
+        <div id="map"></div>
+    </div>
+
+    <!-- Emergency Button -->
+    <button class="emergency-btn" onclick="callAmbulance()">🚑</button>
+
+    <!-- Close Button to Go Back to Home -->
+    <button onclick="goBackToHome()" class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 transition">
+        ✖
+    </button>
+
+    <script>
+        let map, markers = [];
+
+        function initMap() {
+            map = L.map('map').setView([28.7041, 77.1025], 12); // Default: Delhi
+
+            // Load OpenStreetMap Tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+        }
+
+        document.getElementById("gpsButton").addEventListener("click", function() {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                let location = `${position.coords.latitude},${position.coords.longitude}`;
+                fetchHospitals(location);  // ✅ Send coordinates as a location string
+            });
+        });
+
+
+        document.getElementById("searchButton").addEventListener("click", function() {
+            let location = document.getElementById("locationInput").value;
+            if (location.trim() === "") {
+                alert("Please enter a location.");
+                return;
+            }
+            fetchHospitals(location);  // ✅ Now works correctly
+        });
+
+
+        function fetchHospitals(location) {
+            fetch("/nearest_hospitals", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ location: location })  // ✅ Send as "location"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.hospitals) {
+                    updateMap(data.hospitals);
+                } else {
+                    alert("No hospitals found.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+
+        function updateMap(hospitals) {
+            // Clear old markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+
+            hospitals.forEach(hospital => {
+                let marker = L.marker([hospital.lat, hospital.lon]).addTo(map)
+                    .bindPopup(`<b>${hospital.name}</b><br>Rating: ${hospital.rating || "N/A"} ⭐<br>
+                                <a href="https://www.openstreetmap.org/?mlat=${hospital.lat}&mlon=${hospital.lon}&zoom=15"
+                                   target="_blank">Get Directions</a>`);
+
+                markers.push(marker);
+
+                let hospitalCard = document.createElement("div");
+                hospitalCard.classList.add("glass", "p-4", "rounded-lg", "hospital-card", "cursor-pointer");
+                hospitalCard.innerHTML = `
+                    <h3 class="text-xl font-semibold">${hospital.name}</h3>
+                    <p class="text-gray-300">Rating: ${hospital.rating || "N/A"} ⭐</p>
+                    <p class="text-gray-400">${hospital.address || "No address available"}</p>
+                    <a href="https://www.openstreetmap.org/?mlat=${hospital.lat}&mlon=${hospital.lon}&zoom=15"
+                        class="block mt-3 text-blue-400 hover:text-blue-600" target="_blank">Get Directions</a>
+                `;
+
+                hospitalCard.addEventListener("click", function() {
+                    map.setView([hospital.lat, hospital.lon], 15);
+                    marker.openPopup();
+                });
+
+                document.getElementById("hospitalList").appendChild(hospitalCard);
+            });
+        }
+
+        function callAmbulance() {
+            alert("Calling Emergency Ambulance 🚑...");
+            window.location.href = "tel:102";
+        }
+
+        function goBackToHome() {
+            window.location.href = "/";
+        }
+
+        window.onload = initMap;
+    </script>
+
+</body>
+</html>

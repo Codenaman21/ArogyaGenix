@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Dashboard</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://unpkg.com/cornerstone-core"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .drag-area {
+            border: 2px dashed rgba(52, 180, 244, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .drag-area.active {
+            border: 2px solid #34b4f4;
+            background: rgba(52, 180, 244, 0.1);
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .accent-glow {
+            box-shadow: 0 0 15px rgba(52, 180, 244, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-box {
+            background-color: #4b4b4b;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="glass-morphism rounded-xl p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <h1 class="text-3xl font-semibold text-white">Analysis Dashboard</h1>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Upload Section -->
+            <div class="glass-morphism rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Upload Reports</h2>
+                <div class="drag-area rounded-lg p-6 text-center cursor-pointer">
+                    <i class="bi bi-cloud-upload text-4xl text-[#34b4f4] mb-4"></i>
+                    <h3 class="text-lg text-white mb-2">Drag & Drop files here</h3>
+                    <p class="text-sm text-white/70 mb-4">or</p>
+                    <button
+                        class="bg-[#34b4f4]/20 hover:bg-[#34b4f4]/30 text-white px-6 py-2 rounded-lg transition-all">
+                        Browse Files
+                    </button>
+                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.jpg,.jpeg,.png,.dcm" multiple>
+                    <p class="text-sm text-white/70 mt-4">Supported: PDF, JPG, PNG, DICOM</p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="glass-morphism rounded-xl p-6">
+                <h2 class="text-xl font-semibold text-white mb-4">Quick Stats</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[#34b4f4] text-2xl font-bold">24</p>
+                        <p class="text-white/70">Reports Analyzed</p>
+                    </div>
+                    <div class="bg-white/10 rounded-lg p-4">
+                        <p class="text-[#34b4f4] text-2xl font-bold">98%</p>
+                        <p class="text-white/70">Accuracy Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section (Initially Hidden) -->
+        <div id="resultsSection" class="glass-morphism rounded-xl p-6 mt-8 hidden">
+            <h2 class="text-2xl font-semibold text-white mb-6">Analysis Results</h2>
+
+            <div class="space-y-6">
+                <div class="bg-white/10 rounded-lg p-4">
+                    <h3 class="text-[#34b4f4] text-lg mb-2">Detected Condition</h3>
+                    <p id="condition" class="text-white/90">Processing...</p>
+                </div>
+                <div class="bg-white/10 rounded-lg p-4">
+                    <h3 class="text-[#34b4f4] text-lg mb-2">Severity Level</h3>
+                    <div id="severityIndicator" class="h-2 rounded-full bg-white/20">
+                        <div class="h-full w-0 transition-all duration-1000"></div> <!-- ✅ Fixed -->
+                    </div>
+                    <p id="severityText" class="text-white/90 mt-2">Analyzing...</p>
+                </div>
+                <div class="result-box">
+                    <h3 class="text-blue">Disease Summary</h3>
+                    <p id="disease-summary"><em>Loading summary...</em></p>
+                </div>
+                <button id="downloadBtn"
+                    class="bg-[#34b4f4] hover:bg-[#34b4f4]/80 text-white px-8 py-3 rounded-lg transition-all w-full accent-glow">
+                    Download Full Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Button to Go Back to Home -->
+    <button onclick="goBackToHome()"
+        class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 transition">
+        ✖
+    </button>
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fileInput = document.querySelector("#fileInput");
+            const browseButton = document.querySelector(".drag-area button");
+            const dragArea = document.querySelector(".drag-area");
+            const resultsSection = document.querySelector("#resultsSection");
+            const conditionText = document.querySelector("#condition");
+            const severityText = document.querySelector("#severityText");
+            const severityBar = document.querySelector("#severityIndicator div");
+            const downloadBtn = document.querySelector("#downloadBtn");
+
+            // ✅ Browse button triggers file input
+            browseButton.addEventListener("click", function () {
+                fileInput.click();
+            });
+
+            // ✅ Upload when a file is selected
+            fileInput.addEventListener("change", function () {
+                if (fileInput.files.length > 0) {
+                    uploadFile(fileInput.files[0]);
+                }
+            });
+
+            // ✅ Drag & Drop Functionality
+            dragArea.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                dragArea.classList.add("drag-active");
+            });
+
+            dragArea.addEventListener("dragleave", () => {
+                dragArea.classList.remove("drag-active");
+            });
+
+            dragArea.addEventListener("drop", (event) => {
+                event.preventDefault();
+                dragArea.classList.remove("drag-active");
+
+                if (event.dataTransfer.files.length > 0) {
+                    fileInput.files = event.dataTransfer.files;
+                    uploadFile(event.dataTransfer.files[0]);
+                }
+            });
+
+            // ✅ File Upload Function
+            function uploadFile(file) {
+                let formData = new FormData();
+                formData.append("file", file);
+
+                fetch("/upload_cancer_image", {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log("Success:", data);
+
+                        if (data.error) {
+                            alert("Error: " + data.error);
+                            return;
+                        }
+
+                        // ✅ Extract condition and confidence
+                        let detectedMessage = data.message || "No condition detected";
+                        let match = detectedMessage.match(/\*\*(.*?)\*\*\s(.*?)\s\(Confidence:\s(.*?)%\)/);
+                        let detectedCondition = match ? match[2] : detectedMessage;
+                        let confidenceScore = match ? match[3] : "Unknown";
+
+                        // ✅ Ensure UI elements exist before modifying them
+                        if (resultsSection) resultsSection.classList.remove("hidden");
+                        if (conditionText) conditionText.textContent = detectedCondition;
+                        if (severityText) severityText.textContent = `Confidence: ${confidenceScore}%`;
+
+                        // ✅ Update Severity Indicator
+                        if (severityBar) {
+                            let severityPercentage = parseFloat(confidenceScore) || 0;
+                            severityBar.style.width = severityPercentage + "%";
+                            severityBar.style.backgroundColor = severityPercentage > 70 ? "red" : "orange";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("File upload failed! Please try again.");
+                    });
+            }
+
+            // ✅ Download Report Function
+            if (downloadBtn) {
+                downloadBtn.addEventListener("click", function () {
+                    fetch("/download_report")
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const link = document.createElement("a");
+                            link.href = URL.createObjectURL(blob);
+                            link.download = "Medical_Report.pdf";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        })
+                        .catch(error => console.error("Download Error:", error));
+                });
+            }
+        });
+
+        // 🔙 Redirect to Home
+        function goBackToHome() {
+            window.location.href = "/";
+        }
+        function fetchCancerSummary(diseaseName) {
+            fetch('/get_disease_summary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disease: diseaseName })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const summaryPara = document.getElementById('cancer-summary');
+                    if (data.summary) {
+                        summaryPara.textContent = data.summary;
+                    } else {
+                        summaryPara.textContent = "No summary available.";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching summary:', error);
+                    document.getElementById('cancer-summary').textContent = "Error loading summary.";
+                });
+        }
+    </script>
+
+
+</body>
+
+</html>

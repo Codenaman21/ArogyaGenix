@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Sign up Page</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://unpkg.com/jwt-decode/build/jwt-decode.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background: linear-gradient(45deg, #0f172a, #1e293b, #020617);
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.4);
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+
+        button {
+            background: rgba(59, 130, 246, 0.2);
+            transition: 0.3s;
+            border: none;
+        }
+
+        button:hover {
+            background: rgba(59, 130, 246, 0.4);
+        }
+
+        .text-light-blue {
+            color: #3b82f6;
+        }
+
+        .border-light-blue {
+            border-color: #3b82f6;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center p-4">
+    <div id="authForm" class="glass w-full max-w-md p-8 rounded-2xl">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-semibold text-light-blue mb-2" id="formTitle">Welcome Back</h2>
+            <p class="text-gray-400" id="formSubtitle">Sign in to continue</p>
+        </div>
+
+        <form id="authenticationForm" class="space-y-4">
+            <div id="nameField" class="hide">
+                <input type="text" name="username" id="usernameInput" placeholder="Full Name" class="w-full p-3 rounded-lg border-light-blue text-white placeholder-gray-400 focus:border-white/40" required>
+            </div>
+            
+            <div>
+                <input type="email" name="email" id="emailInput" placeholder="Email" required class="w-full p-3 rounded-lg border-light-blue text-white placeholder-gray-400 focus:border-white/40">
+            </div>
+            
+            <div>
+                <input type="password" name="password" id="passwordInput" placeholder="Password" required class="w-full p-3 rounded-lg border-light-blue text-white placeholder-gray-400 focus:border-white/40">
+            </div>
+
+            <button type="submit" id="signInBtn" class="w-full text-white font-medium p-3 rounded-lg">
+                <span id="submitText">Sign In</span>
+            </button>            
+
+            <div class="relative flex items-center justify-center my-4">
+                <hr class="w-full border-white/20">
+                <span class="absolute bg-transparent text-gray-400 px-3">or</span>
+            </div>
+
+            <button type="button" class="w-full flex items-center justify-center gap-2 text-white p-3 rounded-lg">
+                <i class="bi bi-google"></i> Continue with Google
+            </button>
+        </form>
+
+        <p class="text-center mt-6 text-gray-300">
+            <span id="toggleText">Don't have an account?</span>
+            <a href="#" id="toggleAuth" class="text-light-blue font-medium hover:text-blue-400"> Sign Up</a>
+        </p>
+    </div>
+    <div id="dashboard" class="glass w-full max-w-4xl p-8 rounded-2xl hide">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-3xl font-semibold text-light-blue">Account Dashboard</h2>
+            <button id="logoutBtn" class="px-4 py-2 rounded-lg text-white">
+                Logout
+            </button>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="glass p-6 rounded-xl">
+                <h3 class="text-xl font-medium text-light-blue mb-4">Profile Details</h3>
+                <div class="space-y-3 text-gray-300">
+                    <p><span class="text-gray-400">Name:</span> <span id="profileName">Loading...</span></p>
+                    <p><span class="text-gray-400">Email:</span> <span id="profileEmail">Loading....</span></p>
+                </div>
+                <button id="editProfileBtn" class="mt-4 px-4 py-2 rounded-lg text-white">
+                    Edit Profile
+                </button>
+            </div>
+
+            <div class="glass p-6 rounded-xl">
+                <h3 class="text-xl font-medium text-light-blue mb-4">Medical History</h3>
+                <div class="space-y-3 text-gray-300">
+                    <p>No medical records found</p>
+                    <button class="px-4 py-2 rounded-lg text-white">
+                        Add Medical Record
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass p-6 rounded-xl md:col-span-2">
+                <h3 class="text-xl font-medium text-light-blue mb-4">Uploaded Reports</h3>
+                <div class="text-gray-300">
+                    <p>No reports uploaded yet</p>
+                    <button class="mt-4 px-4 py-2 rounded-lg text-white">
+                        Upload New Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button onclick="goBackToHome()" class="fixed top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg hover:bg-red-700 transition">
+        ✖
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            const authForm = document.getElementById('authForm');
+            const dashboard = document.getElementById('dashboard');
+            const toggleAuth = document.getElementById('toggleAuth');
+            const formTitle = document.getElementById('formTitle');
+            const formSubtitle = document.getElementById('formSubtitle');
+            const toggleText = document.getElementById('toggleText');
+            const nameField = document.getElementById('nameField');
+            const submitText = document.getElementById('submitText');
+            const authenticationForm = document.getElementById('authenticationForm');
+            const logoutBtn = document.getElementById('logoutBtn');
+    
+            let isLogin = true;
+    
+            async function checkUserSession() {
+                try {
+                    let response = await fetch("/dashboard-data", { credentials: 'include' });
+                    if (response.ok) {
+                        let result = await response.json();
+                        authForm.classList.add("hide");
+                        dashboard.classList.remove("hide");
+                        document.getElementById("profileName").innerText = result.username;
+                        document.getElementById("profileEmail").innerText = result.email;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user session:", error);
+                }
+            }
+    
+            checkUserSession();
+    
+            function toggleAuthMode(e) {
+                e.preventDefault();
+                isLogin = !isLogin;
+                formTitle.textContent = isLogin ? 'Welcome Back' : 'Create Account';
+                formSubtitle.textContent = isLogin ? 'Sign in to continue' : 'Sign up to get started';
+                toggleText.textContent = isLogin ? "Don't have an account?" : 'Already have an account?';
+                toggleAuth.textContent = isLogin ? 'Sign Up' : 'Sign In';
+                submitText.textContent = isLogin ? 'Sign In' : 'Sign Up';
+                nameField.classList.toggle('hide');
+            }
+    
+            toggleAuth.addEventListener('click', toggleAuthMode);
+    
+            async function handleAuthSubmit(e) {
+                e.preventDefault();
+                const formData = new FormData(authenticationForm);
+                let email = formData.get("email");
+                let password = formData.get("password");
+                let username = formData.get("username");
+    
+                if (!email || !password || (!isLogin && !username)) {
+                    alert("All fields are required!");
+                    return;
+                }
+    
+                try {
+                    let response = await fetch(isLogin ? "/login" : "/signup", {
+                        method: "POST",
+                        body: formData,
+                        credentials: 'include'
+                    });
+    
+                    let result = await response.json();
+                    if (!response.ok) {
+                        alert(result.error);
+                        return;
+                    }
+    
+                    authForm.classList.add('hide');
+                    dashboard.classList.remove('hide');
+                    loadDashboardData();
+                } catch (error) {
+                    console.error(`Error during ${isLogin ? 'login' : 'signup'}:`, error);
+                    alert("An unexpected error occurred. Please try again.");
+                }
+            }
+    
+            authenticationForm.addEventListener('submit', handleAuthSubmit);
+    
+            async function loadDashboardData() {
+                try {
+                    let response = await fetch("/dashboard-data", { credentials: 'include' });
+                    if (!response.ok) {
+                        throw new Error("Session expired");
+                    }
+                    let result = await response.json();
+                    document.getElementById("profileName").innerText = result.username;
+                    document.getElementById("profileEmail").innerText = result.email;
+                } catch (error) {
+                    console.error("Error loading dashboard data:", error);
+                    alert("Your session expired. Please log in again.");
+                    authForm.classList.remove("hide");
+                    dashboard.classList.add("hide");
+                }
+            }
+    
+            async function handleLogout() {
+                try {
+                    let response = await fetch("/logout", { method: "POST", credentials: 'include' });
+                    let result = await response.json();
+                    sessionStorage.clear();  
+                    localStorage.clear(); 
+                    window.location.href = result.redirect || "/login";
+                } catch (error) {
+                    console.error("Error during logout:", error);
+                    window.location.href = "/login";
+                }
+                dashboard.classList.add("hide");
+                authForm.classList.remove("hide");
+            }
+    
+            logoutBtn.addEventListener("click", handleLogout);
+        });
+        function goBackToHome() {
+            window.location.href = "/"; 
+        }
+    </script>
+    
+    
+</body>
+</html>
