@@ -110,19 +110,19 @@ Due to GitHub size restrictions, some large files (e.g., model weights) have bee
 ## 🖼️ Preview Snapshots
 
 ### 🏠 Home Interface  
-![Home](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103234.png)
+![Home](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-04-06%20115332.png)
 
 ### 📁 Report Analysis Dashboard  
-![Dashboard](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103305.png)
+![Dashboard](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-04-06%20120656.png)
 
 ### 🧬 Cancer Detection Result  
-![Cancer Detection](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103335.png)
+![Cancer Detection](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-04-06%20121452.png)
 
 ### 🤖 AI Chatbot Interaction  
-![Chatbot](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103432.png)
+![Chatbot](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-04-06%20120807.png)
 
 ### 📍 Hospital Locator  
-![Locator](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-03-23%20103358.png)
+![Locator](https://github.com/Codenaman21/ArogyaGenix/blob/main/images/Screenshot%202025-04-06%20120742.png)
 
 > **Note:** If images aren’t loading, check the `/images/` directory in the repo.
 
